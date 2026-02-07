@@ -1,0 +1,17 @@
+<link rel="manifest" href="manifest.json">
+)
+
+  "name": "Kesyon Konesans",
+  "short_name": "Konesans",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#fbbf24",
+  "icons": [
+    {
+      "src": "https://kesyon-konesans.vercel.app/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
