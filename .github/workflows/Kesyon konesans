@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiz Syans Sosyal & Byoloji</title>
+    <style>
+        :root { --bio: #4caf50; --social: #ff9800; --bg: #0d1117; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; text-align: center; padding: 15px; }
+        .quiz-card { max-width: 500px; margin: 20px auto; background: #161b22; padding: 30px; border-radius: 20px; border: 2px solid #30363d; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .tag { padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 15px; display: inline-block; }
+        .tag-bio { background: var(--bio); color: white; }
+        .tag-social { background: var(--social); color: white; }
+        #question { font-size: 20px; margin: 20px 0; min-height: 60px; }
+        .btn { display: block; width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #30363d; border-radius: 12px; background: #21262d; color: white; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #30363d; }
+        #score-box { font-size: 20px; color: #58a6ff; font-weight: bold; }
+        .fb { font-weight: bold; height: 25px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <div id="tag" class="tag">MATIYÈ</div>
+    <div id="score-box">Pwen: 0</div>
+    
+    <div id="question">Ap prepare kesyon...</div>
+    <div id="options"></div>
+    <div id="feedback" class="fb"></div>
+</div>
+
+<script>
+    let score = 0;
+
+    // BAZ DONE KESYON
+    const data = {
+        "BYOLOJI": [
+            {q: "Ki ògan ki ponpe san nan tout kò a?", a: "Kè", o: ["Poumon", "Kè", "Fwa"]},
+            {q: "Ki gaz plant yo lage nan lajounen?", a: "Oksijèn", o: ["Kabon", "Oksijèn", "Azòt"]},
+            {q: "Konbe zo yon moun granmoun genyen?", a: "206", o: ["206", "300", "150"]},
+            {q: "Ki sibstans ki bay fèy yo koulè vèt la?", a: "Klowofil", o: ["Klowofil", "Kabòn", "Sèv"]},
+            {q: "Ki kote dijesyon manje kòmanse?", a: "Nan bouch", o: ["Nan lestomak", "Nan bouch", "Nan trip"]},
+            {q: "Ki pi gwo ògan ki kouvri tout kò moun?", a: "Po a", o: ["Po a", "Mis", "Zo"]},
+            {q: "Kisa globil wouj yo transpòte nan san an?", a: "Oksijèn", o: ["Dlo", "Oksijèn", "Sèl"]}
+        ],
+        "SYANS SOSYAL": [
+            {q: "Ki ane Ayiti te deklare depandans li?", a: "1804", o: ["1804", "1791", "1806"]},
+            {q: "Ki vil ki kapital peyi Ayiti?", a: "Pòtoprens", o: ["Okap", "Pòtoprens", "Gonaiv"]},
+            {q: "Ki pi gwo mòn ki genyen nan mond lan?", a: "Everest", o: ["Everest", "Kilimanjaro", "Mòn Lasèl"]},
+            {q: "Ki oseyan ki bò kòt nò peyi Ayiti?", a: "Atlantik", o: ["Atlantik", "Pasifik", "Endyen"]},
+            {q: "Kiyès ki te premye anperè peyi Ayiti?", a: "Dessalines", o: ["Christophe", "Dessalines", "Toussaint"]},
+            {q: "Ki dokiman ki gen lwa yon peyi ladan l?", a: "Konstitisyon", o: ["Kòd Sivil", "Konstitisyon", "Bibil"]},
+            {q: "Konbe depatman ki genyen nan peyi Ayiti?", a: "10", o: ["9", "10", "12"]}
+        ]
+    };
+
+    function playSound(win) {
+        const c = new (window.AudioContext || window.webkitAudioContext)();
+        const o = c.createOscillator();
+        const g = c.createGain();
+        o.frequency.value = win ? 800 : 200;
+        o.connect(g); g.connect(c.destination);
+        o.start();
+        g.gain.exponentialRampToValueAtTime(0.00001, c.currentTime + 0.4);
+        o.stop(c.currentTime + 0.4);
+    }
+
+    function generate() {
+        const cats = Object.keys(data);
+        const cat = cats[Math.floor(Math.random() * cats.length)];
+        const qList = data[cat];
+        const qObj = qList[Math.floor(Math.random() * qList.length)];
+
+        const tagEl = document.getElementById('tag');
+        tagEl.innerText = cat;
+        tagEl.className = cat === "BYOLOJI" ? "tag tag-bio" : "tag tag-social";
+
+        document.getElementById('question').innerText = qObj.q;
+        const optBox = document.getElementById('options');
+        optBox.innerHTML = '';
+
+        [...qObj.o].sort(() => Math.random() - 0.5).forEach(opt => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = opt;
+            b.onclick = () => {
+                const fb = document.getElementById('feedback');
+                if(opt === qObj.a) {
+                    score += 10;
+                    fb.innerText = "✅ Bravo!"; fb.style.color = "#4caf50";
+                    playSound(true);
+                } else {
+                    fb.innerText = "❌ Move repons!"; fb.style.color = "#f44336";
+                    playSound(false);
+                }
+                document.getElementById('score-box').innerText = "Pwen: " + score;
+                document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+                setTimeout(() => { fb.innerText = ""; generate(); }, 1200);
+            };
+            optBox.appendChild(b);
+        });
+    }
+
+    generate();
+</script>
+</body>
+</html>
